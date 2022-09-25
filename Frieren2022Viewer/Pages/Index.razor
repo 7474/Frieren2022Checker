@@ -11,8 +11,25 @@
 {
     <p><em>Loading...</em></p>
 }
-<BarChart @ref="totalChart" TItem="Vote" Options="@totalChartOptions" />
-
+<div>
+    <BarChart @ref="totalChart" TItem="Vote" Options="@totalChartOptions" />
+</div>
+@if (viewPoints != null && viewPoints.Any())
+{
+    <div>
+        <input type="range"
+           style="width: 100%;"
+           min="@(viewPoints.First().ViewPointTick)"
+           max="@(viewPoints.Last().ViewPointTick)"
+           step="@(60 * 60 * 24)"
+           @onchange="@(e => ViewPointChanged(e.Value?.ToString() ?? ""))" />
+        @if (viewPoint != null)
+        {
+            <br>
+            <span>@viewPoint.Label</span>
+        }
+    </div>
+}
 @if (viewVotes != null)
 {
     <table class="table table-striped">
@@ -45,6 +62,9 @@
     private Vote[]? votes;
     private IList<Vote>? viewVotes;
 
+    private IList<ViewPoint>? viewPoints;
+    private ViewPoint? viewPoint;
+
     BarChart<Vote> totalChart;
     private BarChartOptions totalChartOptions = new()
         {
@@ -57,7 +77,16 @@
 
     private List<Vote> ToTotal(IEnumerable<Vote> _votes)
     {
+        return ToTotal(_votes, new ViewPoint
+            {
+                Timestamp = DateTimeOffset.MaxValue,
+            });
+    }
+
+    private List<Vote> ToTotal(IEnumerable<Vote> _votes, ViewPoint _viewPoint)
+    {
         return _votes
+            .Where(x => x.Timestamp <= _viewPoint.Timestamp)
             .GroupBy(x => x.Target)
             .Select(x => new Vote
                 {
@@ -72,6 +101,22 @@
     protected override async Task OnInitializedAsync()
     {
         votes = await Http.GetFromJsonAsync<Vote[]>("votes.json");
+        viewPoints = (votes ?? new Vote[] { })
+            .Select(x => x.Timestamp.LocalDateTime.Date)
+            .Distinct()
+            .Select(x => new ViewPoint
+                {
+                    Label = x.ToString("yyyy/MM/dd"),
+                    Timestamp = x,
+                })
+            .Skip(1)
+            .Append(new ViewPoint
+                {
+                    Label = "最新",
+                    Timestamp = (votes ?? new Vote[] { }).Select(x => x.Timestamp).Max().LocalDateTime.Date.AddDays(1)
+                })
+            .ToList();
+        viewPoint = viewPoints.Last();
         HandleRedraw();
     }
 
@@ -83,9 +128,21 @@
         }
     }
 
+    private void ViewPointChanged(string v)
+    {
+        int tick;
+        if (!int.TryParse(v, out tick)) { return; }
+
+        viewPoint = viewPoints
+            .FirstOrDefault(x => x.ViewPointTick == tick) ?? viewPoint;
+        HandleRedraw();
+    }
+
     private void HandleRedraw()
     {
-        var _votes = ToTotal(votes ?? new Vote[] { });
+        var _votes = viewPoint == null
+            ? ToTotal(votes ?? new Vote[] { })
+            : ToTotal(votes ?? new Vote[] { }, viewPoint);
         viewVotes = _votes;
 
         if (totalChart == null) { return; }
@@ -102,5 +159,13 @@
         public DateTimeOffset Timestamp { get; set; }
         public string? Target { get; set; }
         public int Count { get; set; }
+    }
+
+    public class ViewPoint
+    {
+        public DateTimeOffset Timestamp { get; set; }
+        public string? Label { get; set; }
+
+        public int ViewPointTick => (int)(Timestamp.UtcTicks / 1000 / 1000 / 10);
     }
 }
