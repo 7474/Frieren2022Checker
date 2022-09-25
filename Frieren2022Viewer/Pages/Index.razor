@@ -1,11 +1,11 @@
 ﻿@page "/"
 @inject HttpClient Http
 
-<PageTitle>フリーレン人気投票ツイート推移</PageTitle>
+<PageTitle>フリーレン人気投票ツイート集計</PageTitle>
 
-<h1>フリーレン人気投票ツイート推移</h1>
+<h1>フリーレン人気投票ツイート集計</h1>
 
-<p>フリーレン人気投票関連のツイートの収集結果です。</p>
+<p><a href="https://websunday.net/frieren2022/" target="_blank">フリーレン人気投票</a>関連のツイートの収集結果です。</p>
 
 @if (votes == null)
 {
@@ -36,6 +36,7 @@
 
         return new()
             {
+                Label = "総合",
                 Data = totalData
             };
     }
