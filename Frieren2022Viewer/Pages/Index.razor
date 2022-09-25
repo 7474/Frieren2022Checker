@@ -32,7 +32,7 @@
             {
                 <tr>
                     <td class="text-end">@(++rank)</td>
-                    <td>@v.Timestamp.ToString("yyyy/MM/dd")</td>
+                    <td>@v.Timestamp.LocalDateTime.ToString("yyyy/MM/dd")</td>
                     <td>@v.Target</td>
                     <td>@v.Count.ToString("0,0")</td>
                 </tr>
