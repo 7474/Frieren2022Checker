@@ -16,4 +16,4 @@ GitHub Pagesにデプロイしています。
 
 https://7474.github.io/Frieren2022Checker/
 
-![image](https://user-images.githubusercontent.com/4744735/192155411-380362cd-05fb-41f9-8f86-96511b95a118.png)
+![image](https://user-images.githubusercontent.com/4744735/192159191-368cda8b-1f29-430f-b2fb-8d4842605403.png)
