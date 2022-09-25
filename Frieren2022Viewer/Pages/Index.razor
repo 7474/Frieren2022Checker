@@ -93,7 +93,7 @@
         totalChart.AddDataSet(new BarChartDataset<Vote>()
             {
                 Label = "総合",
-                Data = _votes,
+                Data = _votes.Take(20).ToList(),
             });
     }
 
