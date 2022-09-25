@@ -5,6 +5,8 @@ VisualStudioVersion = 17.3.32714.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frieren2022Checker", "Frieren2022Checker\Frieren2022Checker.csproj", "{420F296B-8521-4EB5-9CF7-A9CBA85DD455}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frieren2022Viewer", "Frieren2022Viewer\Frieren2022Viewer.csproj", "{A04779DC-A1BC-40D4-AA12-97903309A110}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{420F296B-8521-4EB5-9CF7-A9CBA85DD455}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{420F296B-8521-4EB5-9CF7-A9CBA85DD455}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{420F296B-8521-4EB5-9CF7-A9CBA85DD455}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A04779DC-A1BC-40D4-AA12-97903309A110}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A04779DC-A1BC-40D4-AA12-97903309A110}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A04779DC-A1BC-40D4-AA12-97903309A110}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A04779DC-A1BC-40D4-AA12-97903309A110}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
