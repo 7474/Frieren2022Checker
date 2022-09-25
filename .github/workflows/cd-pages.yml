@@ -13,6 +13,15 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Update data
+      run: dotnet run Frieren2022Fetcher/Frieren2022Fetcher.csproj > Frieren2022Viewer/wwwroot/votes.json
+
+    - uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: Update data
+        file_pattern: 'Frieren2022Viewer/wwwroot/votes.json'
+        status_options: '--untracked-files=no'
+
     - name: Publish app
       run: dotnet publish Frieren2022Viewer/Frieren2022Viewer.csproj -c Release
 
