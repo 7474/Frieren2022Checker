@@ -1,7 +1,7 @@
 name: DeployToGitHubPages
 env:
   PUBLISH_DIR: Frieren2022Viewer/bin/Release/net6.0/publish/wwwroot
-
+C:\Users\koude\Frieren2022Viewer\bin\Release\net6.0\publish\wwwroot
 on:
   push:
     branches: [ master ]
@@ -17,8 +17,6 @@ jobs:
     - name: Publish app
       run: dotnet publish Frieren2022Viewer/Frieren2022Viewer.csproj -c Release
 
-    - name: Configure for GitHub Pages
-      run: mv -f ${{ env.PUBLISH_DIR }}/index.ghp.html ${{ env.PUBLISH_DIR }}/index.html
     - name: Rewrite base href
       uses: SteveSandersonMS/ghaction-rewrite-base-href@v1
       with:
