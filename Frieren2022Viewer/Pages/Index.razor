@@ -13,8 +13,37 @@
 }
 <BarChart @ref="totalChart" TItem="Vote" Options="@totalChartOptions" />
 
+@if (viewVotes != null)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Date</th>
+                <th>キャラクター</th>
+                <th>票数</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var rank = 0;
+            }
+            @foreach (var v in viewVotes)
+            {
+                <tr>
+                    <td class="text-end">@(++rank)</td>
+                    <td>@v.Timestamp.ToString("yyyy/MM/dd")</td>
+                    <td>@v.Target</td>
+                    <td>@v.Count.ToString("0,0")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
 @code {
     private Vote[]? votes;
+    private IList<Vote>? viewVotes;
 
     BarChart<Vote> totalChart;
     private BarChartOptions totalChartOptions = new()
@@ -26,19 +55,18 @@
             }
         };
 
-    private BarChartDataset<Vote> GetTotalDataset(Vote[]? _votes)
+    private List<Vote> ToTotal(IEnumerable<Vote> _votes)
     {
-        var totalData = _votes?
-                .GroupBy(x => x.Target)
-                .Select(x => new Vote { Target = x.Key, Count = x.Sum(y => y.Count) })
-                .OrderByDescending(x => x.Count)
-                .ToList() ?? new List<Vote>();
-
-        return new()
-            {
-                Label = "総合",
-                Data = totalData
-            };
+        return _votes
+            .GroupBy(x => x.Target)
+            .Select(x => new Vote
+                {
+                    Timestamp = x.Max(y => y.Timestamp),
+                    Target = x.Key,
+                    Count = x.Sum(y => y.Count)
+                })
+            .OrderByDescending(x => x.Count)
+            .ToList();
     }
 
     protected override async Task OnInitializedAsync()
@@ -57,9 +85,16 @@
 
     private void HandleRedraw()
     {
+        var _votes = ToTotal(votes ?? new Vote[] { });
+        viewVotes = _votes;
+
         if (totalChart == null) { return; }
         totalChart.Clear();
-        totalChart.AddDataSet(GetTotalDataset(votes));
+        totalChart.AddDataSet(new BarChartDataset<Vote>()
+            {
+                Label = "総合",
+                Data = _votes,
+            });
     }
 
     public class Vote
