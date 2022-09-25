@@ -1,9 +1,51 @@
 ﻿@page "/"
+@inject HttpClient Http
 
-<PageTitle>Index</PageTitle>
+<PageTitle>フリーレン人気投票ツイート推移</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>フリーレン人気投票ツイート推移</h1>
 
-Welcome to your new app.
+<p>フリーレン人気投票関連のツイートの収集結果です。</p>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@if (votes == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Target</th>
+                <th>Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in votes)
+            {
+                <tr>
+                    <td>@forecast.Timestamp.ToString()</td>
+                    <td>@forecast.Target</td>
+                    <td>@forecast.Count</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private Vote[]? votes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        votes = await Http.GetFromJsonAsync<Vote[]>("votes.json");
+    }
+
+    public class Vote
+    {
+        public DateTimeOffset Timestamp { get; set; }
+        public string? Target { get; set; }
+        public int Count { get; set; }
+    }
+}
