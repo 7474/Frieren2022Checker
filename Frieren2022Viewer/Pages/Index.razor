@@ -11,35 +11,54 @@
 {
     <p><em>Loading...</em></p>
 }
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Target</th>
-                <th>Count</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in votes)
-            {
-                <tr>
-                    <td>@forecast.Timestamp.ToString()</td>
-                    <td>@forecast.Target</td>
-                    <td>@forecast.Count</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+<BarChart @ref="totalChart" TItem="Vote" Options="@totalChartOptions" />
 
 @code {
     private Vote[]? votes;
 
+    BarChart<Vote> totalChart;
+    private BarChartOptions totalChartOptions = new()
+        {
+            Parsing = new ChartParsing
+            {
+                XAxisKey = "target",
+                YAxisKey = "count",
+            }
+        };
+
+    private BarChartDataset<Vote> GetTotalDataset(Vote[]? _votes)
+    {
+        var totalData = _votes?
+                .GroupBy(x => x.Target)
+                .Select(x => new Vote { Target = x.Key, Count = x.Sum(y => y.Count) })
+                .OrderByDescending(x => x.Count)
+                .ToList() ?? new List<Vote>();
+
+        return new()
+            {
+                Data = totalData
+            };
+    }
+
     protected override async Task OnInitializedAsync()
     {
         votes = await Http.GetFromJsonAsync<Vote[]>("votes.json");
+        HandleRedraw();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            HandleRedraw();
+        }
+    }
+
+    private void HandleRedraw()
+    {
+        if (totalChart == null) { return; }
+        totalChart.Clear();
+        totalChart.AddDataSet(GetTotalDataset(votes));
     }
 
     public class Vote
