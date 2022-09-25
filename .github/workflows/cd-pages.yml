@@ -1,6 +1,6 @@
 name: DeployToGitHubPages
 env:
-  PUBLISH_DIR: Frieren2022Checker/Frieren2022Viewer/bin/Release/net6.0/publish/wwwroot
+  PUBLISH_DIR: Frieren2022Viewer/bin/Release/net6.0/publish/wwwroot
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Publish app
-      run: dotnet publish Frieren2022Checker/Frieren2022Viewer/Frieren2022Viewer.csproj -c Release
+      run: dotnet publish Frieren2022Viewer/Frieren2022Viewer.csproj -c Release
 
     - name: Configure for GitHub Pages
       run: mv -f ${{ env.PUBLISH_DIR }}/index.ghp.html ${{ env.PUBLISH_DIR }}/index.html
