@@ -12,6 +12,7 @@ using Tweetinvi;
 using System.Linq;
 using Tweetinvi.Iterators;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Frieren2022Checker
 {
@@ -57,8 +58,29 @@ namespace Frieren2022Checker
                 .OrderByDescending(x => x.Count)
                 .ToList();
 
+            var raw = tweetsOf1000
+                .Where(x => x.Hashtags.Exists(tag => tag.Text == "フリーレンアニメ化記念キャラ人気投票"))
+                .Select(x => new RawVote(
+                    Timestamp: x.CreatedAt,
+                    Target: x.Hashtags.LastOrDefault()?.Text,
+                    Count: 1000
+                )).Concat(tweetsOf10000
+                .Where(x => x.Hashtags.Exists(tag => tag.Text == "フリーレンアニメ化記念キャラ人気投票"))
+                .Select(x => new RawVote(
+                    Timestamp: x.CreatedAt,
+                    Target: x.Hashtags.LastOrDefault()?.Text,
+                    Count: 10000
+                ))).OrderBy(x => x.Timestamp).ToList();
+            ;
+
+            File.WriteAllText($"./raw-{DateTimeOffset.Now.ToString("yyyyMMddHHmmss")}.json", JsonConvert.SerializeObject(raw));
+            // XXX 循環参照があるので適当に変換しないとダメー Self referencing loop detected for property
+            //File.WriteAllText($"./tweetsOf1000-{DateTimeOffset.Now.ToString("yyyyMMddHHmmss")}.json", JsonConvert.SerializeObject(tweetsOf1000));
+            //File.WriteAllText($"./tweetsOf10000-{DateTimeOffset.Now.ToString("yyyyMMddHHmmss")}.json", JsonConvert.SerializeObject(tweetsOf10000));
+
             return new OkObjectResult(new
             {
+                raw = raw,
                 sen = resOf1000,
                 man = resOf10000
             });
@@ -74,4 +96,11 @@ namespace Frieren2022Checker
             return res;
         }
     }
+
+    public record RawVote(
+        DateTimeOffset Timestamp,
+        string Target,
+        int Count
+    )
+    { }
 }
