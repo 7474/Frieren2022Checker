@@ -21,7 +21,8 @@
            style="width: 100%;"
            min="@(viewPoints.First().ViewPointTick)"
            max="@(viewPoints.Last().ViewPointTick)"
-           step="@(60 * 60 * 24)"
+           step="@(60 * 60)"
+           value="@viewPoint?.ViewPointTick"
            @onchange="@(e => ViewPointChanged(e.Value?.ToString() ?? ""))" />
         @if (viewPoint != null)
         {
@@ -109,7 +110,6 @@
                     Label = x.ToString("yyyy/MM/dd"),
                     Timestamp = x,
                 })
-            .Skip(1)
             .Append(new ViewPoint
                 {
                     Label = "最新",
@@ -130,11 +130,16 @@
 
     private void ViewPointChanged(string v)
     {
-        int tick;
-        if (!int.TryParse(v, out tick)) { return; }
+        long tick;
+        if (!long.TryParse(v, out tick)) { return; }
 
+        var timestamp = new DateTimeOffset(tick * 1000 * 1000 * 10, DateTimeOffset.UtcNow.Offset);
         viewPoint = viewPoints
-            .FirstOrDefault(x => x.ViewPointTick == tick) ?? viewPoint;
+            .FirstOrDefault(x => x.ViewPointTick == tick) ?? new ViewPoint
+                {
+                    Label = timestamp.LocalDateTime.ToString("yyyy/MM/dd HH:mm:ss"),
+                    Timestamp = timestamp,
+                };
         HandleRedraw();
     }
 
@@ -166,6 +171,6 @@
         public DateTimeOffset Timestamp { get; set; }
         public string? Label { get; set; }
 
-        public int ViewPointTick => (int)(Timestamp.UtcTicks / 1000 / 1000 / 10);
+        public long ViewPointTick => (long)(Timestamp.UtcTicks / 1000 / 1000 / 10);
     }
 }
