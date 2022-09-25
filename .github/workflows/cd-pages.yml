@@ -2,10 +2,10 @@ name: DeployToGitHubPages
 env:
   PUBLISH_DIR: Frieren2022Viewer/bin/Release/net6.0/publish/wwwroot
 on:
+  schedule:
+    - cron:  '7 14,2 * * *'
   push:
     branches: [ master ]
-#     paths: 
-#       - .github/workflows/cd-pages.yml
 
 jobs:
   publish:
