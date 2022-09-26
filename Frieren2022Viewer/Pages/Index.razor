@@ -67,7 +67,7 @@
     private IList<ViewPoint>? viewPoints;
     private ViewPoint? viewPoint;
 
-    BarChart<Vote> totalChart;
+    BarChart<Vote>? totalChart;
     private BarChartOptions totalChartOptions = new()
         {
             Parsing = new ChartParsing
@@ -122,7 +122,7 @@
         HandleRedraw();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
         {
@@ -136,7 +136,7 @@
         if (!long.TryParse(v, out tick)) { return; }
 
         var timestamp = new DateTimeOffset(tick * 1000 * 1000 * 10, DateTimeOffset.UtcNow.Offset);
-        viewPoint = viewPoints
+        viewPoint = viewPoints?
             .FirstOrDefault(x => x.ViewPointTick == tick) ?? new ViewPoint
                 {
                     Label = timestamp.LocalDateTime.ToString("yyyy/MM/dd HH:mm:ss"),
