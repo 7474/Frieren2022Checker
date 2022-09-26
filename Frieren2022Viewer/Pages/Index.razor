@@ -102,6 +102,7 @@
     protected override async Task OnInitializedAsync()
     {
         votes = await Http.GetFromJsonAsync<Vote[]>("votes.json");
+        var maxDt = (votes ?? new Vote[] { }).Select(x => x.Timestamp).Max();
         viewPoints = (votes ?? new Vote[] { })
             .Select(x => x.Timestamp.LocalDateTime.Date)
             .Distinct()
@@ -113,7 +114,7 @@
             .Append(new ViewPoint
                 {
                     Label = "最新",
-                    Timestamp = (votes ?? new Vote[] { }).Select(x => x.Timestamp).Max().LocalDateTime.Date.AddDays(1)
+                    Timestamp = new DateTimeOffset(maxDt.Ticks - (maxDt.Ticks % TimeSpan.TicksPerHour) + TimeSpan.TicksPerHour, maxDt.Offset),
                 })
             .ToList();
         viewPoint = viewPoints.Last();
