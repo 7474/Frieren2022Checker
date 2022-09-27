@@ -29,11 +29,11 @@ jobs:
     - name: Publish app
       run: dotnet publish Frieren2022Viewer/Frieren2022Viewer.csproj -c Release
 
-    - name: Rewrite base href
-      uses: SteveSandersonMS/ghaction-rewrite-base-href@v1
-      with:
-        html_path: ${{ env.PUBLISH_DIR }}/index.html
-        base_href: /Frieren2022Checker/
+#     - name: Rewrite base href
+#       uses: SteveSandersonMS/ghaction-rewrite-base-href@v1
+#       with:
+#         html_path: ${{ env.PUBLISH_DIR }}/index.html
+#         base_href: /Frieren2022Checker/
 
     - name: GitHub Pages
       if: success()
