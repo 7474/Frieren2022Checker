@@ -11,18 +11,18 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Update data
-      run: dotnet run --project Frieren2022Fetcher/Frieren2022Fetcher.csproj > Frieren2022Viewer/wwwroot/votes.json
-      env:
-        TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
-        TWITTER_API_KEY_SECRET: ${{ secrets.TWITTER_API_KEY_SECRET }}
-        TWITTER_BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
+#     - name: Update data
+#       run: dotnet run --project Frieren2022Fetcher/Frieren2022Fetcher.csproj > Frieren2022Viewer/wwwroot/votes.json
+#       env:
+#         TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+#         TWITTER_API_KEY_SECRET: ${{ secrets.TWITTER_API_KEY_SECRET }}
+#         TWITTER_BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
         
-    - uses: stefanzweifel/git-auto-commit-action@v4
-      with:
-        commit_message: Update data
-        file_pattern: 'Frieren2022Viewer/wwwroot/votes.json'
-        status_options: '--untracked-files=no'
+#     - uses: stefanzweifel/git-auto-commit-action@v4
+#       with:
+#         commit_message: Update data
+#         file_pattern: 'Frieren2022Viewer/wwwroot/votes.json'
+#         status_options: '--untracked-files=no'
 
     - name: Publish app
       run: dotnet publish Frieren2022Viewer/Frieren2022Viewer.csproj -c Release
