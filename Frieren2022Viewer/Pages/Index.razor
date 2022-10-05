@@ -118,7 +118,7 @@
                 })
             .Append(new ViewPoint
                 {
-                    Label = "最新",
+                    Label = "投票期間終了",
                     Timestamp = new DateTimeOffset(maxDt.Ticks - (maxDt.Ticks % TimeSpan.TicksPerHour) + TimeSpan.TicksPerHour, maxDt.Offset),
                 })
             .ToList();
